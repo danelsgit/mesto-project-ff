@@ -17,8 +17,8 @@ const cardList = document.querySelector(".places__list");
 
 // @todo: Функция создания карточки
 
-function addCard() {
-  cardData.forEach((data) => {
+function createCard(data) {
+ 
     const cardElement = cardTemplate.cloneNode(true);
     cardElement.querySelector(".card__image").src = data.src;
     cardElement.querySelector(".card__title").textContent = data.name;
@@ -35,12 +35,20 @@ function addCard() {
       }
     });
 
+    return cardElement;
+  
+};
+
+// @todo: Вывести карточки на страницу
+
+function renderCards() {
+  cardData.forEach((data) => {
+    const cardElement = createCard(data);
     cardList.append(cardElement);
   });
 }
 
-// @todo: Вывести карточки на страницу
 
 document.addEventListener("DOMContentLoaded", function () {
-  addCard();
+  renderCards();;
 });
