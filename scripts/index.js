@@ -1,54 +1,48 @@
 // @todo: Темплейт карточки
 
-
-const cardData = [
-  { src: "../images/card_1.jpg", name: "Карачаевск" },
-  { src: "../images/card_2.jpg", name: "Гора Эльбрус" },
-  { src: "../images/card_3.jpg", name: "Домбай" },
-  { src: "../images/card_4.jpg", name: "Гора Фудзи" },
-  { src: "../images/card_5.jpg", name: "Море" },
-  { src: "../images/card_6.jpg", name: "Книга" },
-];
-
 // @todo: DOM узлы
 
-const cardTemplate = document.querySelector("#places-card").content;
-const cardList = document.querySelector(".places__list");
+const cardTemplate = document.querySelector('#card-template').content;
+const cardList = document.querySelector('.places__list');
 
-// @todo: Функция создания карточки
+// @todo: Функция удаления карточки
 
-function createCard(data) {
- 
-    const cardElement = cardTemplate.cloneNode(true);
-    cardElement.querySelector(".card__image").src = data.src;
-    cardElement.querySelector(".card__title").textContent = data.name;
-
-    // @todo: Функция удаления карточки
-
-    const deleteButton = cardElement.querySelector(".card__delete-button");
-    deleteButton.addEventListener("click", function () {
-      // Используем closest для нахождения ближайшего родителя с классом 'places__list-item'
-      const parentCard = deleteButton.closest(".places__list-item");
-
-      if (parentCard) {
-        cardList.removeChild(parentCard);
-      }
-    });
-
-    return cardElement;
+function deleteCard(cardElement) {
   
-};
+  const parentCard = cardElement.closest('.card');
+  if (parentCard) {
+    parentCard.remove();
+  }
+}
+
+//@todo Функция создания карточки
+
+function createCard(data, deleteCallback) {
+  const cardElement = cardTemplate.cloneNode(true).querySelector('.card');
+  cardElement.querySelector('.card__image').src = data.link;
+  cardElement.querySelector('.card__image').alt = data.name;
+  cardElement.querySelector('.card__title').textContent = data.name;
+
+
+  const deleteButton = cardElement.querySelector('.card__delete-button');
+  deleteButton.addEventListener('click', function () {
+    // Вызываем функцию удаления, передавая элемент карточки
+    if (deleteCallback) {
+      deleteCallback(cardElement);
+    }
+  });
+
+  return cardElement;
+}
 
 // @todo: Вывести карточки на страницу
 
-function renderCards() {
-  cardData.forEach((data) => {
-    const cardElement = createCard(data);
+
+function createCards() {
+  initialCards.forEach((data) => {
+    const cardElement = createCard(data, deleteCard);
     cardList.append(cardElement);
   });
 }
 
-
-document.addEventListener("DOMContentLoaded", function () {
-  renderCards();;
-});
+createCards();
