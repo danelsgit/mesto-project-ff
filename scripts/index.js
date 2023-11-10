@@ -19,8 +19,9 @@ function deleteCard(cardElement) {
 
 function createCard(data, deleteCallback) {
   const cardElement = cardTemplate.cloneNode(true).querySelector('.card');
-  cardElement.querySelector('.card__image').src = data.link;
-  cardElement.querySelector('.card__image').alt = data.name;
+  const cardImage = cardElement.querySelector('.card__image');
+  cardImage.src = data.link;
+  cardImage.alt = data.name;
   cardElement.querySelector('.card__title').textContent = data.name;
 
 
@@ -38,11 +39,11 @@ function createCard(data, deleteCallback) {
 // @todo: Вывести карточки на страницу
 
 
-function createCards() {
+function addCards() {
   initialCards.forEach((data) => {
     const cardElement = createCard(data, deleteCard);
     cardList.append(cardElement);
   });
 }
 
-createCards();
+addCards();
