@@ -1,11 +1,9 @@
-// @todo: Темплейт карточки
-
-// @todo: DOM узлы
-
 const cardTemplate = document.querySelector('#card-template').content;
 const cardList = document.querySelector('.places__list');
 
-// @todo: Функция удаления карточки
+import { initialCards } from '../utils/constants';
+
+
 
 function deleteCard(cardElement) {
   
@@ -28,14 +26,35 @@ function createCard(data, deleteCallback) {
   const deleteButton = cardElement.querySelector('.card__delete-button');
   deleteButton.addEventListener('click', function () {
     // Вызываем функцию удаления, передавая элемент карточки
-    if (deleteCallback) {
-      deleteCallback(cardElement);
-    }
+   deleteCallback(cardElement)
   });
 
   return cardElement;
 }
 
+cardList.addEventListener('click', function(evt){
+ 
+  if (evt.target.classList.contains('card__like-button')) {
+   evt.target.classList.toggle('card__like-button_is-active')
+  }
+ })
+
+ cardList.addEventListener('click', function(evt){
+  const popupZoomImage = document.querySelector('.popup_type_image');
+  if (evt.target.classList.contains('card__image')) {
+    popupZoomImage.classList.remove('popup_is-animated');
+    popupZoomImage.classList.add('popup_is-opened');
+
+    
+    const cardImg = evt.target.closest('.card__image');
+    const image = cardImg.src;
+    const description = cardImg.alt;
+
+    // Set image source and description in the popup
+    popupZoomImage.querySelector('.popup__image').src = image;
+    popupZoomImage.querySelector('.popup__caption').textContent = description;
+  }
+ })
 // @todo: Вывести карточки на страницу
 
 
@@ -46,4 +65,6 @@ function addCards() {
   });
 }
 
-addCards();
+
+
+export {addCards, createCard, deleteCard}
