@@ -1,12 +1,12 @@
 const cardTemplate = document.querySelector('#card-template').content;
 const cardList = document.querySelector('.places__list');
+const popupZoomImage = document.querySelector('.popup_type_image');
 
 import { initialCards } from '../utils/constants';
-
+import { openPopup } from '../pages';
 
 
 function deleteCard(cardElement) {
-  
   const parentCard = cardElement.closest('.card');
   if (parentCard) {
     parentCard.remove();
@@ -22,39 +22,32 @@ function createCard(data, deleteCallback) {
   cardImage.alt = data.name;
   cardElement.querySelector('.card__title').textContent = data.name;
 
-
   const deleteButton = cardElement.querySelector('.card__delete-button');
   deleteButton.addEventListener('click', function () {
-    // Вызываем функцию удаления, передавая элемент карточки
    deleteCallback(cardElement)
   });
 
-  return cardElement;
-}
+  const likeButton = cardElement.querySelector('.card__like-button');
+  likeButton.addEventListener('click', function () {
+    likeButton.classList.toggle('card__like-button_is-active');
+  });
 
-cardList.addEventListener('click', function(evt){
- 
-  if (evt.target.classList.contains('card__like-button')) {
-   evt.target.classList.toggle('card__like-button_is-active')
-  }
- })
+  const imageDescription = popupZoomImage.querySelector('.popup__caption')
+  const popupImage = popupZoomImage.querySelector('.popup__image')
+  
+  cardImage.addEventListener('click', function () {
+    openPopup(popupZoomImage);
 
- cardList.addEventListener('click', function(evt){
-  const popupZoomImage = document.querySelector('.popup_type_image');
-  if (evt.target.classList.contains('card__image')) {
-    popupZoomImage.classList.remove('popup_is-animated');
-    popupZoomImage.classList.add('popup_is-opened');
-
-    
-    const cardImg = evt.target.closest('.card__image');
+    const cardImg = this.closest('.card__image');
     const image = cardImg.src;
     const description = cardImg.alt;
 
-    // Set image source and description in the popup
-    popupZoomImage.querySelector('.popup__image').src = image;
-    popupZoomImage.querySelector('.popup__caption').textContent = description;
-  }
- })
+    popupImage.src = image;
+    popupImage.alt = description;
+    imageDescription.textContent = description;
+  });
+  return cardElement;
+}
 // @todo: Вывести карточки на страницу
 
 
