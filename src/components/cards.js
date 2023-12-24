@@ -1,66 +1,125 @@
-const cardTemplate = document.querySelector("#card-template").content;
-const cardList = document.querySelector(".places__list");
+import { openPopup } from "../components/modal";
+import {
+  deleteLike,
+  applyLike,
+  deleteCard as deleteCardFromServer,
+} from "./api";
 
+const cardTemplate = document.querySelector("#card-template").content;
 const popupZoomImage = document.querySelector(".popup_type_image");
 const imageDescription = popupZoomImage.querySelector(".popup__caption");
 const popupImage = popupZoomImage.querySelector(".popup__image");
 
-import { initialCards } from "../utils/constants";
-import { openPopup } from "../components/modal";
+function deleteCard(evt, cardId) {
+  deleteCardFromServer(cardId)
+    .then((res) => {
+      const card = document.querySelector(`[data-card-id="${cardId}"]`);
+      card.remove();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
 
-function deleteCard(cardElement) {
-  const parentCard = cardElement.closest(".card");
-  if (parentCard) {
-    parentCard.remove();
+const likeCard = (evt, cardId) => {
+  let currentLikes = evt.target.parentNode.querySelector(".card__like-count");
+  
+  if (evt.target.classList.contains("card__like-button_is-active")) {
+    deleteLike(cardId)
+      .then((updatedCard) => {
+        evt.target.classList.remove("card__like-button_is-active");
+        currentLikes.textContent = updatedCard.likes.length;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  } else {
+    applyLike(cardId)
+      .then((updatedCard) => {
+        evt.target.classList.add("card__like-button_is-active");
+        currentLikes.textContent = updatedCard.likes.length;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
-}
+  
+};
 
-function likeCard(likeButton) {
-  likeButton.classList.toggle("card__like-button_is-active");
-}
-
-function openImagePopup(data) {
+function openImagePopup(imageURL, imageAlt, title) {
   openPopup(popupZoomImage);
-  popupImage.src = data.link;
-  popupImage.alt = data.name;
-  imageDescription.textContent = data.name;
+  popupImage.src = imageURL;
+  popupImage.alt = imageAlt;
+  imageDescription.textContent = title;
 }
 //@todo Функция создания карточки
 
-function createCard(data, { deleteCallback, handleLike, handleImageClick }) {
-  const cardElement = cardTemplate.cloneNode(true).querySelector(".card");
+const createCard = (card, userId, deleteCard, likeCard, openImagePopup) => {
+  const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
+  const cardDeleteButton = cardElement.querySelector(".card__delete-button");
+  const cardLikeButton = cardElement.querySelector(".card__like-button");
   const cardImage = cardElement.querySelector(".card__image");
-  cardImage.src = data.link;
-  cardImage.alt = data.name;
-  cardElement.querySelector(".card__title").textContent = data.name;
+  const cardTitle = cardElement.querySelector(".card__title");
+  const cardLikeCount = cardElement.querySelector(".card__like-count");
 
-  const deleteButton = cardElement.querySelector(".card__delete-button");
-  deleteButton.addEventListener("click", function () {
-    deleteCallback(cardElement);
+  // delete id
+  cardElement.dataset.cardId = card._id;
+  cardElement.dataset.ownerId = card.owner._id;
+  cardImage.src = card.link;
+  cardImage.alt = card.description;
+  cardTitle.textContent = card.name;
+
+  // likes
+  cardLikeCount.textContent = card.likes.length;
+  const isLiked = card.likes.forEach((like) => like._id === userId);
+  if (isLiked) {
+    cardLikeButton.classList.add("card__like-button_is-active");
+  }
+
+  // delete
+  if (card.owner._id === userId) {
+    cardDeleteButton.addEventListener("click", (evt) => {
+      deleteCard(evt, card._id);
+    });
+  } else {
+    cardDeleteButton.remove();
+  }
+
+  cardLikeButton.addEventListener("click", (evt) => {
+    likeCard(evt, card._id);
   });
 
-  const likeButton = cardElement.querySelector(".card__like-button");
-  likeButton.addEventListener("click", function () {
-    handleLike(likeButton);
-  });
-
-  cardImage.addEventListener("click", function () {
-    handleImageClick(data);
+  // image popup
+  cardImage.addEventListener("click", () => {
+    openImagePopup(cardImage.src, cardImage.alt, cardTitle.textContent);
   });
 
   return cardElement;
-}
+};
+
 // @todo: Вывести карточки на страницу
 
-function addCards() {
-  initialCards.forEach((data) => {
-    const cardElement = createCard(data, {
-      deleteCallback: deleteCard,
-      handleLike: likeCard,
-      handleImageClick: openImagePopup,
-    });
-    cardList.append(cardElement);
-  });
-}
+const renderCard = (
+  card,
+  userId,
+  container,
+  likeCard,
+  deleteCard,
+  openImagePopup,
+  place = "end"
+) => {
+  const cardElement = createCard(
+    card,
+    userId,
+    deleteCard,
+    likeCard,
+    openImagePopup
+  );
+  if (place === "end") {
+    container.append(cardElement);
+  } else {
+    container.prepend(cardElement);
+  }
+};
 
-export { addCards, createCard, deleteCard, likeCard, openImagePopup };
+export { renderCard, deleteCard, likeCard, openImagePopup };
