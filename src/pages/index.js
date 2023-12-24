@@ -81,21 +81,27 @@ profileEditButton.addEventListener("click", () => {
   );
 });
 
-profileAddButton.addEventListener("click", () => {
-  openPopup(profileAddPopup);
-  formNewPlace.reset()
+function turnOffButton(form){
   const inputList = Array.from(
-    formNewPlace.querySelectorAll(settings.inputSelector)
+    form.querySelectorAll(settings.inputSelector)
   );
-  const buttonElement = formNewPlace.querySelector(
+  const buttonElement = form.querySelector(
     settings.submitButtonSelector
   );
   toggleButtonState(inputList, buttonElement, settings);
+}
+
+
+profileAddButton.addEventListener("click", () => {
+  openPopup(profileAddPopup);
+  formNewPlace.reset()
+  turnOffButton(formNewPlace)
 });
 
 profileImage.addEventListener("click", () => {
   openPopup(profileImagePopup);
   profileImageForm.reset()
+  turnOffButton(profileImageForm)
 });
 
 function handleAvatarSubmit(evt){
@@ -104,6 +110,7 @@ function handleAvatarSubmit(evt){
   updateUserAvatar(profileImageForm.avatar.value)
     .then((updatedProfile) => {
       fillProfileInfo(updatedProfile);
+      closePopup(profileImagePopup);
     })
     .catch((err) => {
       console.log(err);
@@ -112,7 +119,8 @@ function handleAvatarSubmit(evt){
       renderLoading(false, profileImageForm.querySelector(".popup__button"));
     });
     
-  closePopup(profileImagePopup);
+  
+  
 }
 profileImagePopup.addEventListener("submit", handleAvatarSubmit);
 
@@ -126,6 +134,7 @@ function handleProfileFormSubmit(evt) {
   })
     .then((updatedProfile) => {
       fillProfileInfo(updatedProfile);
+      closePopup(profileEditPopup);
     })
     .catch((err) => {
       console.log(err);
@@ -134,7 +143,7 @@ function handleProfileFormSubmit(evt) {
       renderLoading(false, profileEditPopup.querySelector(".popup__button"));
     });
    
-  closePopup(profileEditPopup);
+  
 }
 profileEditPopup.addEventListener("submit", handleProfileFormSubmit);
 
@@ -152,8 +161,9 @@ function handleFormCard() {
         deleteCard,
         openImagePopup,
         "start",
+        
       );
-     
+      closePopup(profileAddPopup);
     })
     .catch((err) => {
       console.log(err);
@@ -162,7 +172,7 @@ function handleFormCard() {
       renderLoading(false, profileAddPopup.querySelector(".popup__button"));
     });
     
-  closePopup(profileAddPopup);
+  
 }
 
 function setCardFormHandler() {

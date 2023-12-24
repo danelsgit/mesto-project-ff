@@ -22,7 +22,7 @@ function deleteCard(evt, cardId) {
 }
 
 const likeCard = (evt, cardId) => {
-  let currentLikes = evt.target.parentNode.querySelector(".card__like-count");
+  let currentLikes = evt.target.closest(".card__like-count");
   
   if (evt.target.classList.contains("card__like-button_is-active")) {
     deleteLike(cardId)
@@ -71,7 +71,7 @@ const createCard = (card, userId, deleteCard, likeCard, openImagePopup) => {
 
   // likes
   cardLikeCount.textContent = card.likes.length;
-  const isLiked = card.likes.forEach((like) => like._id === userId);
+  const isLiked = card.likes.some((like) => like._id === userId);
   if (isLiked) {
     cardLikeButton.classList.add("card__like-button_is-active");
   }
@@ -100,7 +100,7 @@ const createCard = (card, userId, deleteCard, likeCard, openImagePopup) => {
 // @todo: Вывести карточки на страницу
 
 const renderCard = (
-  card,
+  item,
   userId,
   container,
   likeCard,
@@ -109,7 +109,7 @@ const renderCard = (
   place = "end"
 ) => {
   const cardElement = createCard(
-    card,
+    item,
     userId,
     deleteCard,
     likeCard,
