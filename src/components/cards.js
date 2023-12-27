@@ -22,7 +22,7 @@ function deleteCard(evt, cardId) {
 }
 
 const likeCard = (evt, cardId) => {
-  let currentLikes = evt.target.closest(".card__like-count");
+  const currentLikes = evt.target.closest(".card").querySelector(".card__like-count");
   
   if (evt.target.classList.contains("card__like-button_is-active")) {
     deleteLike(cardId)
@@ -46,12 +46,6 @@ const likeCard = (evt, cardId) => {
   
 };
 
-function openImagePopup(imageURL, imageAlt, title) {
-  openPopup(popupZoomImage);
-  popupImage.src = imageURL;
-  popupImage.alt = imageAlt;
-  imageDescription.textContent = title;
-}
 //@todo Функция создания карточки
 
 const createCard = (card, userId, deleteCard, likeCard, openImagePopup) => {
@@ -97,6 +91,12 @@ const createCard = (card, userId, deleteCard, likeCard, openImagePopup) => {
   return cardElement;
 };
 
+function openImagePopup(imageURL, imageAlt, title) {
+  openPopup(popupZoomImage);
+  popupImage.src = imageURL;
+  popupImage.alt = imageAlt;
+  imageDescription.textContent = title;
+}
 // @todo: Вывести карточки на страницу
 
 const renderCard = (

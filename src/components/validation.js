@@ -49,6 +49,25 @@ const toggleButtonState = (inputList, buttonElement, settings) => {
   }
 };
 
+const clearValidation = (formElement, settings) => {
+  const inputList = Array.from(
+    formElement.querySelectorAll(settings.inputSelector),
+  );
+  const buttonElement = formElement.querySelector(
+    settings.submitButtonSelector,
+  );
+  buttonElement.classList.add(settings.inactiveButtonClass);
+  inputList.forEach((inputElement) => {
+    hideInputError(
+      formElement,
+      inputElement,
+      settings.inputErrorClass,
+      settings.errorClass,
+    );
+    inputElement.setCustomValidity("");
+  });
+};
+
 const hasInvalidInput = (inputList) => {
   return inputList.some((inputElement) => {
     return !inputElement.validity.valid;
@@ -99,4 +118,4 @@ const enableValidation = (settings) => {
   });
 };
 
-export { enableValidation, toggleButtonState};
+export { enableValidation, clearValidation};

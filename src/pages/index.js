@@ -15,7 +15,7 @@ import {
   postNewCard,
   updateUserAvatar,
   updateUserProfile, } from "../components/api";
-import { enableValidation, toggleButtonState } from "../components/validation";
+import { enableValidation, clearValidation } from "../components/validation";
 
 const profileImage = document.querySelector(".profile__image");
 const profileTitle = document.querySelector(".profile__title");
@@ -79,29 +79,19 @@ profileEditButton.addEventListener("click", () => {
     profileTitle.textContent,
     profileDescription.textContent,
   );
+
 });
-
-function turnOffButton(form){
-  const inputList = Array.from(
-    form.querySelectorAll(settings.inputSelector)
-  );
-  const buttonElement = form.querySelector(
-    settings.submitButtonSelector
-  );
-  toggleButtonState(inputList, buttonElement, settings);
-}
-
 
 profileAddButton.addEventListener("click", () => {
   openPopup(profileAddPopup);
   formNewPlace.reset()
-  turnOffButton(formNewPlace)
+  
 });
 
 profileImage.addEventListener("click", () => {
   openPopup(profileImagePopup);
   profileImageForm.reset()
-  turnOffButton(profileImageForm)
+  
 });
 
 function handleAvatarSubmit(evt){
@@ -111,6 +101,7 @@ function handleAvatarSubmit(evt){
     .then((updatedProfile) => {
       fillProfileInfo(updatedProfile);
       closePopup(profileImagePopup);
+      clearValidation(profileImageForm, settings)
     })
     .catch((err) => {
       console.log(err);
@@ -135,6 +126,7 @@ function handleProfileFormSubmit(evt) {
     .then((updatedProfile) => {
       fillProfileInfo(updatedProfile);
       closePopup(profileEditPopup);
+      clearValidation(profileEditForm, settings)
     })
     .catch((err) => {
       console.log(err);
@@ -164,6 +156,7 @@ function handleFormCard() {
         
       );
       closePopup(profileAddPopup);
+      clearValidation(formNewPlace, settings)
     })
     .catch((err) => {
       console.log(err);
