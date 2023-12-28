@@ -1,22 +1,22 @@
-const showInputError = (formElement, inputElement, errorMessage, inputSelector ) => {
+const showInputError = (formElement, inputElement, errorMessage, inputErrorClass, errorClass ) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
-  inputElement.classList.add(inputSelector + "_type_error");
+  inputElement.classList.add(inputErrorClass);
   errorElement.textContent = errorMessage;
-  errorElement.classList.add(inputSelector + "-error_active");
+  errorElement.classList.add(errorClass);
 };
 
-const hideInputError = (formElement, inputElement, inputSelector ) => {
+const hideInputError = (formElement, inputElement, inputErrorClass, errorClass ) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
-  inputElement.classList.remove(inputSelector + "_type_error");
-  errorElement.classList.remove(inputSelector + "-error_active");
+  inputElement.classList.remove(inputErrorClass);
+  errorElement.classList.remove(errorClass);
   errorElement.textContent = "";
 };
 
-const checkInputValidity = (formElement, inputElement) => {
+const checkInputValidity = (formElement, inputElement, inputErrorClass, errorClass) => {
   if (!inputElement.validity.valid) {
-    showInputError(formElement, inputElement, inputElement.validationMessage);
+    showInputError(formElement, inputElement, inputElement.validationMessage, inputErrorClass, errorClass);
   } else {
-    hideInputError(formElement, inputElement);
+    hideInputError(formElement, inputElement,inputErrorClass, errorClass);
   }
 };
 
@@ -27,13 +27,12 @@ const setEventListeners = (formElement, settings) => {
   const buttonElement = formElement.querySelector(
     settings.submitButtonSelector
   );
-
   // чтобы проверить состояние кнопки в самом начале
   toggleButtonState(inputList, buttonElement, settings);
 
   inputList.forEach((inputElement) => {
     inputElement.addEventListener("input", () => {
-      checkInputValidity(formElement, inputElement);
+      checkInputValidity(formElement, inputElement, settings.inputErrorClass, settings.errorClass);
       toggleButtonState(inputList, buttonElement, settings);
     });
   });
@@ -57,6 +56,7 @@ const clearValidation = (formElement, settings) => {
     settings.submitButtonSelector,
   );
   buttonElement.classList.add(settings.inactiveButtonClass);
+  buttonElement.setAttribute("disabled", "disabled");
   inputList.forEach((inputElement) => {
     hideInputError(
       formElement,
@@ -64,7 +64,7 @@ const clearValidation = (formElement, settings) => {
       settings.inputErrorClass,
       settings.errorClass,
     );
-    inputElement.setCustomValidity("");
+    
   });
 };
 
@@ -109,7 +109,7 @@ const setCustomValidityMessages = (formElement, settings) => {
   });
 };
 
-// Изменяем функцию enableValidation, чтобы она также устанавливала кастомные сообщения об ошибках
+
 const enableValidation = (settings) => {
   const formList = Array.from(document.querySelectorAll(settings.formSelector));
   formList.forEach((formElement) => {

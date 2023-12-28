@@ -43,6 +43,7 @@ const settings = {
   inactiveButtonClass: 'popup__button_inactive',
   inputErrorClass: 'popup__input_type_error',
   errorClass: 'popup__input-error_active'
+  
 }
 
 let userId;
@@ -79,19 +80,19 @@ profileEditButton.addEventListener("click", () => {
     profileTitle.textContent,
     profileDescription.textContent,
   );
-
+  enableValidation(settings);
 });
 
 profileAddButton.addEventListener("click", () => {
   openPopup(profileAddPopup);
   formNewPlace.reset()
-  
+  enableValidation(settings);
 });
 
 profileImage.addEventListener("click", () => {
   openPopup(profileImagePopup);
   profileImageForm.reset()
-  
+  enableValidation(settings);
 });
 
 function handleAvatarSubmit(evt){
@@ -189,4 +190,4 @@ getInfo()
 
 setClosePopupListeners();
 setCardFormHandler();
-enableValidation(settings);
+
